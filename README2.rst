@@ -1,7 +1,7 @@
 
 
 
-# README généré pour le projet NBA Player Stats Dashboard
+# README pour le projet NBA Player Stats Dashboard
 
 ###  NBA Player Stats Dashboard README"
 
