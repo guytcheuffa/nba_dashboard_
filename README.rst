@@ -94,4 +94,4 @@ Pandas : Bibliothèque Python pour le traitement des données.
 BeautifulSoup4 : Utilisé pour parser et extraire les données HTML lors du scraping.
 
 Auteurs: Guy Tcheuffa, Elysee Mugabire
-Nous declaron sur l'honneur que ce projet est le fruit de notre travail personnel et de chatgpt.
+Nous declarons sur l'honneur que ce projet est le fruit de notre travail personnel et de chatgpt.
