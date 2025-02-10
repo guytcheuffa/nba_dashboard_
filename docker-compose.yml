@@ -1,0 +1,44 @@
+
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile  # Dockerfile pour le scraper (celui mis à jour avec netcat-openbsd)
+    container_name: nba_scraper
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    # La commande est définie dans le Dockerfile (CMD) ci-dessus
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard  # Utilise le Dockerfile dédié au dashboard
+    container_name: nba_dashboard
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    ports:
+      - "8050:8050"
+
+volumes:
+  mongo-data:
