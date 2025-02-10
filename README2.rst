@@ -3,7 +3,7 @@
 
 # README généré pour le projet NBA Player Stats Dashboard
 
-echo "### 📝 NBA Player Stats Dashboard README"
+echo "###  NBA Player Stats Dashboard README"
 
 # Titre du projet
 echo "# NBA Player Stats Dashboard"
