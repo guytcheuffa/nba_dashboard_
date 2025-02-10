@@ -1,9 +1,9 @@
 
-#!/bin/bash
+
 
 # README généré pour le projet NBA Player Stats Dashboard
 
-echo "###  NBA Player Stats Dashboard README"
+###  NBA Player Stats Dashboard README"
 
 # Titre du projet
 echo "# NBA Player Stats Dashboard"
