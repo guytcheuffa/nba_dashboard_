@@ -20,10 +20,10 @@ def wait_for_mongodb():
             print("✔ MongoDB est prêt !")
             return client
         except pymongo.errors.ServerSelectionTimeoutError:
-            print(f"❌ MongoDB non disponible, tentative {i+1}/{retries}...")
+            print(f" MongoDB non disponible, tentative {i+1}/{retries}...")
             time.sleep(5)  # Attendre avant de réessayer
 
-    raise Exception("❌ Impossible de se connecter à MongoDB après plusieurs tentatives.")
+    raise Exception(" Impossible de se connecter à MongoDB après plusieurs tentatives.")
 
 # Utilisation :
 client = wait_for_mongodb()
