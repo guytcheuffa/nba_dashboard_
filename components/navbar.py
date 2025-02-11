@@ -8,8 +8,8 @@ def create_navbar():
         ], style={'display': 'flex', 'alignItems': 'center'}),
         
         html.Div([
-            dcc.Link("🏀 Joueurs", href="/players", style={'marginRight': '20px', 'color': 'white', 'textDecoration': 'none'}),
-            dcc.Link("📊 Statistiques", href="/stats", style={'color': 'white', 'textDecoration': 'none'}),
+            dcc.Link(" Joueurs", href="/players", style={'marginRight': '20px', 'color': 'white', 'textDecoration': 'none'}),
+            dcc.Link(" Statistiques", href="/stats", style={'color': 'white', 'textDecoration': 'none'}),
         ], style={'display': 'flex'})
     ], style={
         'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'center',
