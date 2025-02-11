@@ -5,44 +5,44 @@ import time
 from geopy.geocoders import Nominatim
 import pymongo
 
-# ✅ Fonction pour récupérer les statistiques des joueurs
+#  Fonction pour récupérer les statistiques des joueurs
 def fetch_top_players_and_stats(year):
     url = f'https://www.basketball-reference.com/leagues/NBA_{year}_totals.html'
     try:
         tables = pd.read_html(url)
         nba_totals = tables[0]
 
-        # ✅ Supprimer les lignes d'en-tête dupliquées
+        #  Supprimer les lignes d'en-tête dupliquées
         nba_totals = nba_totals[nba_totals[nba_totals.columns[0]] != 'Rk']
 
-        # ✅ Trier et sélectionner les 200 meilleurs joueurs selon les points
+        #  Trier et sélectionner les 200 meilleurs joueurs selon les points
         nba_totals = nba_totals.sort_values(by="PTS", ascending=False).head(200)
 
-        # ✅ Ajouter la colonne de l’année
+        #  Ajouter la colonne de l’année
         nba_totals.loc[:, 'Year'] = year
 
-        # ✅ Sauvegarder en CSV
+        #  Sauvegarder en CSV
         nba_totals.to_csv(f'nba_stats_{year}.csv', index=False)
-        print(f"✅ Statistiques des top 200 joueurs pour l'année {year} récupérées avec succès.")
+        print(f" Statistiques des top 200 joueurs pour l'année {year} récupérées avec succès.")
 
         return nba_totals[['Player', 'PTS', 'TRB', '2P', '3P', 'Year']]
     
     except Exception as e:
-        print(f"❌ Erreur lors de l'extraction des joueurs pour l'année {year}: {e}")
+        print(f" Erreur lors de l'extraction des joueurs pour l'année {year}: {e}")
         return pd.DataFrame()
 
-# ✅ Fonction pour récupérer les collèges et coordonnées des joueurs
+#  Fonction pour récupérer les collèges et coordonnées des joueurs
 def fetch_players_colleges(players_stats):
     players_data = []
     geolocator = Nominatim(user_agent="my_nba_scraper")
-    college_cache = {}  # ✅ Cache des coordonnées pour éviter les requêtes répétées
-    session = requests.Session()  # ✅ Optimisation des requêtes HTTP
+    college_cache = {}  #  Cache des coordonnées pour éviter les requêtes répétées
+    session = requests.Session()  #  Optimisation des requêtes HTTP
     headers = {"User-Agent": "Mozilla/5.0"}
 
     for letter in range(ord('a'), ord('z') + 1):
         url = f'https://www.basketball-reference.com/players/{chr(letter)}/'
         response = session.get(url, headers=headers)
-        time.sleep(1)  # ✅ Respecter les délais pour éviter d’être bloqué
+        time.sleep(1)  #  Respecter les délais pour éviter d’être bloqué
 
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
@@ -58,7 +58,7 @@ def fetch_players_colleges(players_stats):
                         columns = row.find_all('td')
                         college = columns[-1].text.strip() if len(columns) > 0 else 'N/A'
 
-                        # ✅ Vérifier si on a déjà cherché cette université
+                        #  Vérifier si on a déjà cherché cette université
                         if college in college_cache:
                             latitude, longitude = college_cache[college]
                         else:
@@ -68,7 +68,7 @@ def fetch_players_colleges(players_stats):
                                     latitude, longitude = location.latitude, location.longitude
                                 else:
                                     latitude, longitude = None, None
-                                college_cache[college] = (latitude, longitude)  # ✅ Ajouter au cache
+                                college_cache[college] = (latitude, longitude)  #  Ajouter au cache
                             except:
                                 latitude, longitude = None, None
 
@@ -90,7 +90,7 @@ def fetch_players_colleges(players_stats):
     print(f"✅ Fichier créé avec succès : nba_top_players_colleges.csv")
     return players_df
 
-# ✅ Fonction pour gérer la connexion MongoDB avec des tentatives
+#  Fonction pour gérer la connexion MongoDB avec des tentatives
 def connect_to_mongo(retries=5, delay=5):
     """Essaye de se connecter à MongoDB avec plusieurs tentatives"""
     for i in range(retries):
@@ -99,29 +99,29 @@ def connect_to_mongo(retries=5, delay=5):
             client = pymongo.MongoClient(MONGO_URI)
             db = client["nba_db"]
             collection = db["players_stats"]
-            print("✅ Connexion à MongoDB réussie !")
+            print(" Connexion à MongoDB réussie !")
             return collection
         except pymongo.errors.ServerSelectionTimeoutError:
-            print(f"⏳ Tentative {i+1}/{retries} : MongoDB n'est pas prêt... Attente {delay} sec.")
+            print(f" Tentative {i+1}/{retries} : MongoDB n'est pas prêt... Attente {delay} sec.")
             time.sleep(delay)
-    print("❌ Impossible de se connecter à MongoDB.")
+    print(" Impossible de se connecter à MongoDB.")
     return None
 
-# ✅ Fonction pour stocker les données dans MongoDB
+#  Fonction pour stocker les données dans MongoDB
 def store_in_mongo(players_stats):
     collection = connect_to_mongo()
     if collection is not None and not players_stats.empty:
         data_dict = players_stats.to_dict("records")
         if data_dict:  # Vérifie que la liste n'est pas vide
             collection.insert_many(data_dict)
-            print("✅ Données insérées dans MongoDB avec succès.")
+            print(" Données insérées dans MongoDB avec succès.")
         else:
-            print("⚠️ Aucune donnée à insérer.")
+            print(" Aucune donnée à insérer.")
     else:
-        print("❌ Erreur lors de l'insertion des données dans MongoDB.")
+        print(" Erreur lors de l'insertion des données dans MongoDB.")
 
 
-# ✅ Exécution du script principal
+#  Exécution du script principal
 if __name__ == "__main__":
     all_top_players_stats = pd.DataFrame()
 
@@ -131,8 +131,8 @@ if __name__ == "__main__":
             ignore_index=True
         )
 
-    # ✅ Scraper les collèges
+    #  Scraper les collèges
     players_college_data = fetch_players_colleges(all_top_players_stats)
 
-    # ✅ Stocker les données dans MongoDB
+    #  Stocker les données dans MongoDB
     store_in_mongo(players_college_data)
