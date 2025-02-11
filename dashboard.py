@@ -11,12 +11,12 @@ def connect_to_mongo(retries=10, delay=10):
             client = pymongo.MongoClient("mongodb://mongodb:27017/")
             db = client["nba_db"]
             collection = db["players_stats"]
-            print("✅ Connexion à MongoDB réussie !")
+            print(" Connexion à MongoDB réussie !")
             return collection
         except pymongo.errors.ServerSelectionTimeoutError:
-            print(f"⏳ Tentative {i+1}/{retries} : MongoDB n'est pas prêt... Attente {delay} sec.")
+            print(f" Tentative {i+1}/{retries} : MongoDB n'est pas prêt... Attente {delay} sec.")
             time.sleep(delay)
-    print("❌ Impossible de se connecter à MongoDB.")
+    print(" Impossible de se connecter à MongoDB.")
     return None
 
 # Connexion à MongoDB
